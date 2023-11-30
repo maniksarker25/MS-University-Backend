@@ -47,7 +47,7 @@ const updateSingleAcademicFaculty = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Successfully update academic semester',
+    message: 'Successfully update academic faculty',
     data: result,
   });
 });
