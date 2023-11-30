@@ -13,7 +13,7 @@ const createAcademicDepartment = catchAsync(async (req, res) => {
     data: result,
   });
 });
-// get all academic Department-----
+// get all academic Department-
 const getAllAcademicDepartment = catchAsync(async (req, res) => {
   const result =
     await AcademicDepartmentServices.getAllAcademicDepartmentFromDB();
