@@ -1,6 +1,5 @@
-import mongoose, { startSession } from 'mongoose';
+import mongoose from 'mongoose';
 import config from '../../config';
-import { TAcademicSemester } from '../academicSemester/academicSemester.interface';
 import { AcademicSemester } from '../academicSemester/academicSemester.model';
 import { TStudent } from '../student/student.interface';
 import { Student } from '../student/student.model';
@@ -50,9 +49,10 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
     await session.commitTransaction();
     await session.endSession();
     return newStudent;
-  } catch (error) {
+  } catch (error: any) {
     await session.abortTransaction();
     await session.endSession();
+    throw new Error(error);
     // console.log(error);
   }
 };

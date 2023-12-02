@@ -201,6 +201,18 @@ studentSchema.pre('aggregate', function (next) {
   next();
 });
 
+//
+studentSchema.pre('findOneAndUpdate', async function (next) {
+  const query = this.getQuery();
+  console.log(query);
+  const isStudentExists = await Student.findOne(query);
+  console.log(isStudentExists);
+  if (!isStudentExists) {
+    throw new Error('This Student does not exists');
+  }
+  next();
+});
+
 // ---------creating a costume static method -------------------------
 
 studentSchema.statics.isUserExists = async function (id: string) {

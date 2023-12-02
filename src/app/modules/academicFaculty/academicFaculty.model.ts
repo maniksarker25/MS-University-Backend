@@ -27,8 +27,8 @@ academicFacultySchema.pre('save', async function (next) {
 // create pre method for checking existing faculty for update faculty
 academicFacultySchema.pre('findOneAndUpdate', async function (next) {
   const query = this.getQuery();
-  const isDepartmentExists = await AcademicFaculty.findOne(query);
-  if (!isDepartmentExists) {
+  const isFacultyExists = await AcademicFaculty.findOne(query);
+  if (!isFacultyExists) {
     throw new Error('This Faculty does not exists');
   }
   next();
