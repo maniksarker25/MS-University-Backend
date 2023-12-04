@@ -6,7 +6,7 @@ import { updateStudentValidationSchema } from './student.validation';
 const router = express.Router();
 
 // this routers will call controller --------
-router.get('/all-students', StudentControllers.getAllStudents);
+router.get('/', StudentControllers.getAllStudents);
 router.get('/:studentId', StudentControllers.getSingleStudent);
 router.patch(
   '/:studentId',

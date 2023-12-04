@@ -5,8 +5,33 @@ import httpStatus from 'http-status';
 import { User } from '../user/user.model';
 import { TStudent } from './student.interface';
 
-const getAllStudentsFromDB = async () => {
-  const result = await Student.find()
+const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
+  console.log('base query :', query);
+  const queryObj = { ...query };
+
+  let searchTerm = '';
+  if (query?.searchTerm) {
+    searchTerm = query.searchTerm as string;
+  }
+  // HOW OUR FORMAT SHOULD BE FOR PARTIAL MATCH  :
+  //  { email: { $regex : query.searchTerm , $options: i}}
+  //  { presentAddress: { $regex : query.searchTerm , $options: i}}
+  //  { 'name.firstName': { $regex : query.searchTerm , $options: i}}
+
+  // WE ARE DYNAMICALLY DOING IT USING LOOP
+
+  const searchQuery = Student.find({
+    $or: ['email', 'name.firstName', 'presentAddress'].map((field) => ({
+      [field]: { $regex: searchTerm, $options: 'i' },
+    })),
+  });
+
+  // filtering ------------------
+  const excludeFields = ['searchTerm', 'sort', 'limit', 'page'];
+  excludeFields.forEach((el) => delete queryObj[el]);
+  console.log({ query, queryObj });
+  const filterQuery = searchQuery
+    .find(queryObj)
     .populate('admissionSemester')
     .populate({
       path: 'academicDepartment',
@@ -14,7 +39,27 @@ const getAllStudentsFromDB = async () => {
         path: 'academicFaculty',
       },
     });
-  return result;
+  // for sorting --------------------
+  let sort = '-createdAt';
+  if (query.sort) {
+    sort = query.sort as string;
+  }
+  const sortQuery = filterQuery.sort(`-${sort}`); // add - for ascending
+
+  let page = 1;
+  let limit = 10;
+  let skip = 0;
+  if (query.limit) {
+    limit = Number(query.limit);
+  }
+  if (query.page) {
+    page = Number(query.page);
+    skip = (page - 1) * limit;
+  }
+  const paginateQuery = sortQuery.skip(skip);
+
+  const limitQuery = await paginateQuery.limit(limit);
+  return limitQuery;
 };
 const getSingleStudentFromDB = async (id: string) => {
   // const result = await Student.findOne({ id });

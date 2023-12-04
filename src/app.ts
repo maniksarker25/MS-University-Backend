@@ -22,10 +22,13 @@ app.use(cors());
 // application routers ----------------
 app.use('/api/v1', router);
 
-app.get('/', (req: Request, res: Response) => {
-  const a = 10;
-  res.send(a);
-});
+const test = (req: Request, res: Response) => {
+  Promise.reject();
+  // const a = 10;
+  // res.send(a);
+};
+
+app.get('/', test);
 
 // global error handler
 app.use(globalErrorHandler);
