@@ -11,7 +11,7 @@ const loginUser = async (payload: TLoginUser) => {
   if (!(await User.isUserExistsByCustomId(payload.id))) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user does not exist');
   }
-  // checking if the user is already deleted ----
+  // checking if the user is already deleted ------------
   if (await User.isUserDeleted(payload.id)) {
     throw new AppError(httpStatus.FORBIDDEN, 'This user is already deleted');
   }
