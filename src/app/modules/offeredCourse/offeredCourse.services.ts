@@ -134,7 +134,6 @@ const updateOfferedCourseIntoDB = async (
     faculty,
     days: { $in: days },
   }).select('days startTime endTime');
-  // console.log(assignedSchedules);
   const newSchedule = {
     days,
     startTime,
