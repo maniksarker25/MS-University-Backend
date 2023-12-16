@@ -29,7 +29,33 @@ const updateOfferedCourse = catchAsync(async (req, res) => {
   });
 });
 
+// get all offered courses -----
+const getAllOfferedCourse = catchAsync(async (req, res) => {
+  const result = await offeredCourseServices.getAllOfferedCourseFromDB(
+    req.query,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Offered course retrieved successfully',
+    data: result,
+  });
+});
+// get single offered course ------
+const getSingleOfferedCourse = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await offeredCourseServices.getSingleOfferedCourseFromDB(id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Single Offered course retrieved successfully',
+    data: result,
+  });
+});
+
 export const offeredCourseControllers = {
   createOfferedCourse,
   updateOfferedCourse,
+  getAllOfferedCourse,
+  getSingleOfferedCourse,
 };

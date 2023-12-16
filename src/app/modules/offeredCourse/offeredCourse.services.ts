@@ -8,6 +8,7 @@ import { AcademicDepartment } from '../academicDepartment/academicDepartment.mod
 import { Course } from '../Course/course.model';
 import { Faculty } from '../Faculty/faculty.model';
 import { hasTimeConflict } from './offeredCourse.utilities';
+import QueryBuilder from '../../builder/QueryBuilder';
 
 const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
   const {
@@ -150,8 +151,30 @@ const updateOfferedCourseIntoDB = async (
   });
   return result;
 };
+// get all offered course from Db
+const getAllOfferedCourseFromDB = async (query: Record<string, unknown>) => {
+  const offeredCourseQuery = new QueryBuilder(OfferedCourse.find(), query)
+    .filter()
+    .paginate()
+    .sort()
+    .fields();
+  const result = await offeredCourseQuery.modelQuery;
+  return result;
+};
+// get single offered course
+const getSingleOfferedCourseFromDB = async (id: string) => {
+  const offeredCourse = await OfferedCourse.findById(id);
+
+  if (!offeredCourse) {
+    throw new AppError(404, 'Offered Course not found');
+  }
+
+  return offeredCourse;
+};
 
 export const offeredCourseServices = {
   createOfferedCourseIntoDB,
   updateOfferedCourseIntoDB,
+  getAllOfferedCourseFromDB,
+  getSingleOfferedCourseFromDB,
 };
