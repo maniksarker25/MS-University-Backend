@@ -9,6 +9,7 @@ import { Course } from '../Course/course.model';
 import { Faculty } from '../Faculty/faculty.model';
 import { hasTimeConflict } from './offeredCourse.utilities';
 import QueryBuilder from '../../builder/QueryBuilder';
+import { semesterRegistrationStatus } from '../semesterRegistration/semesterRegistration.constant';
 
 const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
   const {
@@ -171,10 +172,36 @@ const getSingleOfferedCourseFromDB = async (id: string) => {
 
   return offeredCourse;
 };
+// delete offered course
+const deleteOfferedCourseFromDB = async (id: string) => {
+  /**
+   * Step 1: check if the offered course exists
+   * Step 2: check if the semester registration status is upcoming
+   * Step 3: delete the offered course
+   */
+  const isExistsOfferedCourse = await OfferedCourse.findById(id);
+  if (!isExistsOfferedCourse) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Course is not found');
+  }
+  const semesterRegistrationStatus = await SemesterRegistration.findById(
+    isExistsOfferedCourse.semesterRegistration,
+  ).select('status');
+  // console.log(semesterRegistrationStatus);
+  if (semesterRegistrationStatus?.status !== 'UPCOMING') {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `Offered course can not delete ! because the semester ${semesterRegistrationStatus}`,
+    );
+  }
+  const result = await OfferedCourse.findByIdAndDelete(id);
+
+  return result;
+};
 
 export const offeredCourseServices = {
   createOfferedCourseIntoDB,
   updateOfferedCourseIntoDB,
   getAllOfferedCourseFromDB,
   getSingleOfferedCourseFromDB,
+  deleteOfferedCourseFromDB,
 };
