@@ -10,6 +10,7 @@ import express, {
   application,
 } from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import router from './app/routes';
 import notFound from './app/middlewares/notFound';
@@ -17,7 +18,8 @@ const app: Application = express();
 
 // parser
 app.use(express.json());
-app.use(cors());
+app.use(cookieParser());
+app.use(cors({ origin: ['http://localhost:5173'] }));
 
 // application routers ----------------
 app.use('/api/v1', router);
