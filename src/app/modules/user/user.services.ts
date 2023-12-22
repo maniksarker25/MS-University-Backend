@@ -16,7 +16,6 @@ import { TFaculty } from '../Faculty/faculty.interface';
 import { AcademicDepartment } from '../academicDepartment/academicDepartment.model';
 import { Faculty } from '../Faculty/faculty.model';
 import { Admin } from '../Admin/admin.model';
-import { verifyToken } from '../Auth/auth.utilies';
 import { sendImageToCloudinary } from '../../utilities/sendImageToCloudinary';
 
 const createStudentIntoDB = async (password: string, studentData: TStudent) => {

@@ -1,9 +1,11 @@
 import { v2 as cloudinary } from 'cloudinary';
+import config from '../config';
+import multer from 'multer';
 export const sendImageToCloudinary = () => {
   cloudinary.config({
-    cloud_name: 'dp6nuvot3',
-    api_key: '578152791375281',
-    api_secret: 'N8x2HVDeXXZvOUJkAV40S-nWx-g',
+    cloud_name: config.cloudinary_cloud_name,
+    api_key: config.cloudinary_api_key,
+    api_secret: config.cloudinary_api_secret,
   });
   //
   cloudinary.uploader.upload(
@@ -14,3 +16,15 @@ export const sendImageToCloudinary = () => {
     },
   );
 };
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, process.cwd() + '/uploads/');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, file.fieldname + '-' + uniqueSuffix);
+  },
+});
+
+export const upload = multer({ storage: storage });
