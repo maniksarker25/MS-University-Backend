@@ -170,8 +170,12 @@ const createAdminIntoDB = async (password: string, payload: TFaculty) => {
   }
 };
 
+// get me ------
+const getMe = async (id: string, role: string) => {};
+
 export const UserService = {
   createStudentIntoDB,
   createFacultyIntoDB,
   createAdminIntoDB,
+  getMe,
 };

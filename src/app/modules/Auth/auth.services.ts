@@ -5,7 +5,7 @@ import { TLoginUser } from './auth.interface';
 import { JwtPayload } from 'jsonwebtoken';
 import config from '../../config';
 import bcrypt from 'bcrypt';
-import { createToken } from './auth.utilies';
+import { createToken, verifyToken } from './auth.utilies';
 import jwt from 'jsonwebtoken';
 import { sendEmail } from '../../utilities/sendEmail';
 
@@ -94,10 +94,7 @@ const changePassword = async (
 // refreshToken -----------------
 const refreshToken = async (token: string) => {
   // check if the token is valid-
-  const decoded = jwt.verify(
-    token,
-    config.jwt_refresh_secret as string,
-  ) as JwtPayload;
+  const decoded = verifyToken(token, config.jwt_refresh_secret as string);
   const { userId, iat } = decoded;
   // get the user if that here ---------
 
