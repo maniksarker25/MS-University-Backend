@@ -47,9 +47,10 @@ const createStudentIntoDB = async (
     }
 
     const imageName = `${userData?.id}${studentData?.name?.firstName}`;
+
     // send image to cloudinary --------
     const { secure_url } = await sendImageToCloudinary(imageName, file?.path);
-
+    // console.log(profileImage);
     // create new user(transaction1)
     const newUser = await User.create([userData], { session });
     // now create a student -----------------------
@@ -59,6 +60,7 @@ const createStudentIntoDB = async (
     // set id , _id as user
     studentData.id = newUser[0].id;
     studentData.user = newUser[0]._id; // reference id
+    studentData.profileImage = secure_url;
 
     // create new student(transaction2)
     const newStudent = await Student.create([studentData], { session });
