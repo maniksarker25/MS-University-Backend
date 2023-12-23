@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from 'mongoose';
 import config from '../../config';
 import { AcademicSemester } from '../academicSemester/academicSemester.model';
@@ -18,7 +19,11 @@ import { Faculty } from '../Faculty/faculty.model';
 import { Admin } from '../Admin/admin.model';
 import { sendImageToCloudinary } from '../../utilities/sendImageToCloudinary';
 
-const createStudentIntoDB = async (password: string, studentData: TStudent) => {
+const createStudentIntoDB = async (
+  file: any,
+  password: string,
+  studentData: TStudent,
+) => {
   // create a user
   const userData: Partial<TUser> = {};
 
@@ -41,8 +46,9 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
       userData.id = await generateStudentId(admissionSemester);
     }
 
+    const imageName = `${userData?.id}${studentData?.name?.firstName}`;
     // send image to cloudinary --------
-    sendImageToCloudinary();
+    const { secure_url } = await sendImageToCloudinary(imageName, file?.path);
 
     // create new user(transaction1)
     const newUser = await User.create([userData], { session });
@@ -133,7 +139,7 @@ const createAdminIntoDB = async (password: string, payload: TFaculty) => {
   const userData: Partial<TUser> = {};
 
   //if password is not given , use deafult password
-  userData.password = password || (config.default_password as string);
+  userData.password = password || (config.default_pass as string);
 
   //set student role
   userData.role = 'admin';

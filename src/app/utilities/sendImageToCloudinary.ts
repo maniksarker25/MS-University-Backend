@@ -1,20 +1,26 @@
 import { v2 as cloudinary } from 'cloudinary';
 import config from '../config';
 import multer from 'multer';
-export const sendImageToCloudinary = () => {
-  cloudinary.config({
-    cloud_name: config.cloudinary_cloud_name,
-    api_key: config.cloudinary_api_key,
-    api_secret: config.cloudinary_api_secret,
-  });
+////----------------
+cloudinary.config({
+  cloud_name: config.cloudinary_cloud_name,
+  api_key: config.cloudinary_api_key,
+  api_secret: config.cloudinary_api_secret,
+});
+export const sendImageToCloudinary = (imageName: string, path: string) => {
   //
-  cloudinary.uploader.upload(
-    'https://cdn.britannica.com/34/212134-050-A7289400/Lionel-Messi-2018.jpg',
-    { public_id: 'messi' },
-    function (error, result) {
-      console.log(result);
-    },
-  );
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload(
+      path,
+      { public_id: imageName },
+      function (error, result) {
+        if (error) {
+          reject(error);
+        }
+        resolve(result);
+      },
+    );
+  });
 };
 
 const storage = multer.diskStorage({

@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { UserStatus } from './user.constant';
-import { string } from 'joi';
 
 const userValidationSchema = z.object({
   password: z
