@@ -9,7 +9,7 @@ export const hasTimeConflict = (
     const existingEndTime = new Date(`1970-01-01T${schedule.endTime}`);
     const newStartTime = new Date(`1970-01-01T${newSchedule.startTime}`);
     const newEndTime = new Date(`1970-01-01T${newSchedule.endTime}`);
-    if (newStartTime < existingEndTime || newEndTime > existingStartTime) {
+    if (newStartTime < existingEndTime && newEndTime > existingStartTime) {
       return true;
     }
   }

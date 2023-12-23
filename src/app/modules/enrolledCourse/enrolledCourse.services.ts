@@ -6,6 +6,8 @@ import { TEnrolledCourse } from './enrolledCourse.interface';
 import { Student } from '../student/student.model';
 import EnrolledCourse from './enrolledCourse.model';
 import mongoose from 'mongoose';
+import { SemesterRegistration } from '../semesterRegistration/semesterRegistration.model';
+import { Course } from '../Course/course.model';
 
 const createEnrolledCourseIntoDB = async (
   userId: string,
@@ -24,13 +26,15 @@ const createEnrolledCourseIntoDB = async (
       'This offered course course does not exist',
     );
   }
+  // find existing course --------
+  const course = await Course.findById(isOfferedCourseExists.course);
 
   // check if offerCourse max capacity is <0
   if (isOfferedCourseExists.maxCapacity <= 0) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Capacity is full');
   }
 
-  const student = await Student.findOne({ id: userId }).select('_id');
+  const student = await Student.findOne({ id: userId }, { _id: 1 });
   if (!student) {
     throw new AppError(httpStatus.NOT_FOUND, 'Student not found');
   }
@@ -42,6 +46,55 @@ const createEnrolledCourseIntoDB = async (
   });
   if (isStudentAlreadyEnrolled) {
     throw new AppError(httpStatus.CONFLICT, 'Student is already enrolled');
+  }
+
+  // check total credits + new enrolled credit > max credits-----
+  const semesterRegistration = await SemesterRegistration.findById(
+    isOfferedCourseExists.semesterRegistration,
+  ).select('maxCredit');
+
+  //
+  const enrolledCourses = await EnrolledCourse.aggregate([
+    {
+      $match: {
+        semesterRegistration: isOfferedCourseExists.semesterRegistration,
+        student: student._id,
+      },
+    },
+    {
+      $lookup: {
+        from: 'courses',
+        localField: 'course',
+        foreignField: '_id',
+        as: 'enrolledCourseData',
+      },
+    },
+    {
+      $unwind: '$enrolledCourseData',
+    },
+    {
+      $group: {
+        _id: null,
+        totalEnrolledCredits: { $sum: '$enrolledCourseData.credits' },
+      },
+    },
+    {
+      $project: { _id: 0, totalEnrolledCredits: 1 },
+    },
+  ]);
+  // console.log(enrolledCourses);
+  // check total credits + new enrolled credit > max credits-----
+  const totalEnrolledCredits =
+    enrolledCourses.length > 0 ? enrolledCourses[0].totalEnrolledCredits : 0;
+  if (
+    totalEnrolledCredits &&
+    semesterRegistration?.maxCredit &&
+    totalEnrolledCredits + course?.credits > semesterRegistration?.maxCredit
+  ) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'You have exceeded the maximum credits',
+    );
   }
   const session = await mongoose.startSession();
 
