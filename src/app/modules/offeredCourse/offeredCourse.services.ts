@@ -1,4 +1,3 @@
-import httpStatus, { BAD_REQUEST } from 'http-status';
 import AppError from '../../error/appError';
 import { SemesterRegistration } from '../semesterRegistration/semesterRegistration.model';
 import { TOfferedCourse } from './offeredCourse.interface';
@@ -9,7 +8,7 @@ import { Course } from '../Course/course.model';
 import { Faculty } from '../Faculty/faculty.model';
 import { hasTimeConflict } from './offeredCourse.utilities';
 import QueryBuilder from '../../builder/QueryBuilder';
-import { semesterRegistrationStatus } from '../semesterRegistration/semesterRegistration.constant';
+import httpStatus from 'http-status';
 
 const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
   const {
@@ -66,6 +65,7 @@ const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
       _id: academicDepartment,
     },
   );
+  ///---------------------
   if (!isDepartmentBelongsToAcademicFaculty) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
