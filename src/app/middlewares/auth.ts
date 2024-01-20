@@ -17,11 +17,23 @@ const auth = (...requiredRoles: TUserRole[]) => {
       throw new AppError(httpStatus.UNAUTHORIZED, 'Your are not authorized');
     }
     // check if the token is valid-
-    const decoded = jwt.verify(
-      token,
-      config.jwt_access_secret as string,
-    ) as JwtPayload;
+    // checking if the given token is valid
+
+    let decoded;
+
+    try {
+      decoded = jwt.verify(
+        token,
+        config.jwt_access_secret as string,
+      ) as JwtPayload;
+    } catch (err) {
+      throw new AppError(httpStatus.UNAUTHORIZED, 'Token is expired');
+    }
     const { role, userId, iat } = decoded;
+
+    if (!decoded) {
+      throw new AppError(httpStatus.UNAUTHORIZED, 'Token is expired');
+    }
     // get the user if that here ---------
 
     const user = await User.isUserExistsByCustomId(userId);
