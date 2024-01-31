@@ -48,6 +48,7 @@ const createStudentIntoDB = async (
   if (!academicDepartment) {
     throw new AppError(404, 'Academic Department not found not');
   }
+  studentData.academicFaculty = academicDepartment.academicFaculty;
   // use transaction and rollback
   const session = await mongoose.startSession();
 
