@@ -43,7 +43,7 @@ const updateFaculty = catchAsync(async (req, res) => {
 
 const deleteFaculty = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const result = await FacultyServices.deleteStudentFromDB(id);
+  const result = await FacultyServices.deleteFacultyFromDB(id);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

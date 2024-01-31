@@ -65,7 +65,7 @@ export const createStudentValidationSchema = z.object({
 export const updateStudentValidationSchema = z.object({
   body: z.object({
     student: z.object({
-      name: userNameValidationSchema.partial().optional(), // Allow partial updates for name
+      name: userNameValidationSchema.partial().optional(),
       gender: z.enum(['male', 'female', 'other']).optional(),
       dateOfBirth: z.string().optional(),
       email: z.string().email().optional(),
@@ -76,8 +76,8 @@ export const updateStudentValidationSchema = z.object({
         .optional(),
       presentAddress: z.string().optional(),
       permanentAddress: z.string().optional(),
-      guardian: guardianValidationSchema.partial().optional(), // Allow partial updates for guardian
-      localGuardian: localGuardianValidationSchema.partial().optional(), // Allow partial updates for localGuardian
+      guardian: guardianValidationSchema.partial().optional(),
+      localGuardian: localGuardianValidationSchema.partial().optional(),
       admissionSemester: z.string().optional(),
       profileImage: z.string().optional(),
     }),

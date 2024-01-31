@@ -47,14 +47,3 @@ export type TStudent = {
 export interface StudentModel extends Model<TStudent> {
   isUserExists(id: string): Promise<TStudent | null>;
 }
-
-// ------------for creating instance method -----------------------
-// export type studentMethods = {
-//   isUserExists(id: string): Promise<TStudent | null>;
-// };
-
-// export type StudentModel = Model<
-//   TStudent,
-//   Record<string, never>,
-//   studentMethods
-// >;
