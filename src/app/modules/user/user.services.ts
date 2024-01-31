@@ -37,6 +37,17 @@ const createStudentIntoDB = async (
     studentData.admissionSemester,
   );
 
+  if (!admissionSemester) {
+    throw new AppError(404, 'Admission Semester not found');
+  }
+
+  // find department
+  const academicDepartment = await AcademicDepartment.findById(
+    studentData.academicDepartment,
+  );
+  if (!academicDepartment) {
+    throw new AppError(404, 'Academic Department not found not');
+  }
   // use transaction and rollback
   const session = await mongoose.startSession();
 

@@ -24,7 +24,7 @@ const getAllAcademicFaculty = catchAsync(async (req, res) => {
     data: result,
   });
 });
-// get single academic faculty
+// get single academic faculty --
 const getSingleAcademicFaculty = catchAsync(async (req, res) => {
   const { facultyId } = req.params;
   const result =
