@@ -168,7 +168,15 @@ const getAllOfferedCourseFromDB = async (query: Record<string, unknown>) => {
   };
 };
 // get all offered course from Db
-const getMyAllOfferedCourseFromDB = async (userId: string) => {
+const getMyAllOfferedCourseFromDB = async (
+  userId: string,
+  query: Record<string, unknown>,
+) => {
+  // setup paginate ----------------
+  const page = Number(query?.page) || 1;
+  const limit = Number(query?.limit) || 10;
+  const skip = (page - 1) * limit;
+
   // find the student
   const student = await Student.findOne({ id: userId });
   // console.log(student);
@@ -186,7 +194,8 @@ const getMyAllOfferedCourseFromDB = async (userId: string) => {
     throw new AppError(404, 'There is no registration semester ongoing');
   }
   //
-  const result = await OfferedCourse.aggregate([
+
+  const aggregationQuery = [
     {
       $match: {
         semesterRegistration: currentOngoingRegistrationSemester?._id,
@@ -309,8 +318,31 @@ const getMyAllOfferedCourseFromDB = async (userId: string) => {
         isPrerequisitesFulfilled: true,
       },
     },
+  ];
+  const paginationQuery = [
+    {
+      $skip: skip,
+    },
+    {
+      $limit: limit,
+    },
+  ];
+  const result = await OfferedCourse.aggregate([
+    ...aggregationQuery,
+    ...paginationQuery,
   ]);
-  return result;
+  const total = (await OfferedCourse.aggregate(aggregationQuery)).length;
+  const totalPage = Math.ceil(result.length / limit);
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+      totalPage,
+    },
+    result,
+  };
 };
 // get single offered course
 const getSingleOfferedCourseFromDB = async (id: string) => {
