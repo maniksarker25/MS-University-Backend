@@ -3,6 +3,7 @@ import catchAsync from '../../utilities/catchasync';
 import sendResponse from '../../utilities/sendResponse';
 import { authServices } from './auth.services';
 import config from '../../config';
+import AppError from '../../error/appError';
 
 const loginUser = catchAsync(async (req, res) => {
   const result = await authServices.loginUser(req.body);
@@ -10,6 +11,8 @@ const loginUser = catchAsync(async (req, res) => {
   res.cookie('refreshToken', refreshToken, {
     secure: config.NODE_ENV === 'production',
     httpOnly: true,
+    sameSite: 'none',
+    maxAge: 1000 * 60 * 60 * 24 * 265,
   });
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -60,6 +63,10 @@ const forgetPassword = catchAsync(async (req, res) => {
 const resetPassword = catchAsync(async (req, res) => {
   // const userId = req.body.id;
   const token = req?.headers?.authorization;
+
+  if (!token) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Something went wrong !');
+  }
   const result = await authServices.resetPassword(req.body, token);
   sendResponse(res, {
     statusCode: httpStatus.OK,
