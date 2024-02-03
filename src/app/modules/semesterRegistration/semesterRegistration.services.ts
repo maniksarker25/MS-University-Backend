@@ -68,7 +68,8 @@ const getAllSemesterRegistrationFromDB = async (
     .paginate()
     .fields();
   const result = await semesterRegistrationQuery.modelQuery;
-  return result;
+  const meta = await semesterRegistrationQuery.countTotal();
+  return { meta, result };
 };
 
 // get single semester registration from db -----
@@ -180,6 +181,7 @@ const deleteSingleRegistrationSemesterFromDB = async (id: string) => {
     session.endSession();
     console.log('delete');
     return null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     await session.abortTransaction();
     await session.endSession();

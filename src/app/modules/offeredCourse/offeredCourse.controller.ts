@@ -38,7 +38,8 @@ const getAllOfferedCourse = catchAsync(async (req, res) => {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Offered course retrieved successfully',
-    data: result,
+    meta: result.meta,
+    data: result.result,
   });
 });
 // get my all offered courses -----
@@ -52,7 +53,8 @@ const getMyAllOfferedCourse = catchAsync(async (req, res) => {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Offered course retrieved successfully',
-    data: result,
+    meta: result.meta,
+    data: result.result,
   });
 });
 // get single offered course ------

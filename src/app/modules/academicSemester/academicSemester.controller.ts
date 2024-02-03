@@ -16,12 +16,15 @@ const createAcademicSemester = catchAsync(async (req, res) => {
 });
 // get all academic students
 const getAllAcademicSemesters = catchAsync(async (req, res) => {
-  const result = await AcademicSemesterServices.getAllAcademicSemestersFromDB();
+  const result = await AcademicSemesterServices.getAllAcademicSemestersFromDB(
+    req.query,
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Successfully retrieved academic semesters',
-    data: result,
+    meta: result.meta,
+    data: result.result,
   });
 });
 // get single academic semester
